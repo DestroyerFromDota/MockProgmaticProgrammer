@@ -1,0 +1,18 @@
+app_name: "EXAM"
+version: "1.0.0"
+
+# Правильное написание
+log_level: "INFO"
+
+settings:
+  max_attempts: 5
+  timeout: 30
+  debug: false
+
+modules:
+  - name: "auth"
+    enabled: true
+  - name: "database"
+    enabled: false
+  - name: "api"
+    enabled: true
