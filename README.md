@@ -37,21 +37,22 @@
 
 
 
-🚀 Быстрый старт
-bash
-# Клонировать репозиторий
-git clone https://github.com/DestroyerFromDota/MockProgmaticProgrammer
-cd linux-exams
+##  Быстрый старт
+
+## 1. Клонировать репозиторий
+`git clone https://github.com/DestroyerFromDota/MockProgmaticProgrammer.git`
+`cd MockProgmaticProgrammer`
+`cd linux-exams`
 
 # Выбрать экзамен (например, cowsay)
-cd exam[1-3]
+`cd exam[1-3]`
 
 # Собрать образ
-docker build -t cowsay-exam .
+`docker build -t cowsay-exam .`
 
 # Запустить контейнер
-docker run -d --name cow-student -p 2222:22 cowsay-exam
+`docker run -d --name cow-student -p 2222:22 cowsay-exam`
 
 # Подключиться студентом
-ssh student@localhost -p 2222
+`ssh student@localhost -p 2222`
 # пароль: exam2026
