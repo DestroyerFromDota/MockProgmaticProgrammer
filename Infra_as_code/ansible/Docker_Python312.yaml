@@ -1,0 +1,107 @@
+---
+# Начало описания playbook
+# Указываем имя playbook, которое будет отображаться при запуске
+- name: Install Docker and Python 3.12 on Debian
+  # Указываем на каких хостах будет выполняться playbook
+  # all - означает на всех хостах из inventory файла
+  hosts: all
+  # become: yes - означает выполнять задачи с повышением привилегий (через sudo)
+  become: yes
+  
+  # Блок задач playbook
+  tasks:
+    # Первая задача - обновление кэша пакетов apt
+    - name: Update apt cache
+      # Используем модуль apt для работы с пакетами в Debian/Ubuntu
+      apt:
+        # update_cache: yes - обновляет список доступных пакетов (аналог apt update)
+        update_cache: yes
+
+    # Вторая задача - установка Python 3.12 и связанных пакетов
+    - name: Install Python 3.12
+      # Используем модуль apt для установки пакетов
+      apt:
+        # name - список пакетов для установки
+        name:
+          # python3.12 - основной интерпретатор Python версии 3.12
+          - python3.12
+          # python3.12-venv - модуль для создания виртуальных окружений
+          - python3.12-venv
+          # python3-pip - менеджер пакетов Python (pip) для Python 3
+          - python3-pip
+        # state: present - гарантирует, что пакет установлен (если не установлен - установит)
+        state: present
+
+    # Третья задача - установка зависимостей для Docker
+    - name: Install Docker dependencies
+      # Используем модуль apt для установки пакетов
+      apt:
+        name:
+          # apt-transport-https - позволяет apt использовать репозитории по HTTPS
+          - apt-transport-https
+          # ca-certificates - сертификаты для проверки SSL/TLS соединений
+          - ca-certificates
+          # curl - инструмент для передачи данных по URL
+          - curl
+          # gnupg - GNU Privacy Guard для работы с GPG ключами
+          - gnupg
+        state: present
+
+    # Четвертая задача - добавление GPG ключа Docker
+    - name: Add Docker GPG key
+      # apt_key - модуль для управления GPG ключами apt
+      apt_key:
+        # url - адрес, откуда скачать GPG ключ Docker
+        url: https://download.docker.com/linux/debian/gpg
+        # state: present - добавляет ключ, если его нет
+        state: present
+
+    # Пятая задача - добавление официального репозитория Docker
+    - name: Add Docker repository
+      # apt_repository - модуль для управления apt репозиториями
+      apt_repository:
+        # repo - строка с описанием репозитория
+        # deb - тип репозитория
+        # [arch=amd64] - архитектура процессора (64-bit)
+        # https://download.docker.com/linux/debian - URL репозитория
+        # {{ ansible_distribution_release }} - переменная Ansible с именем релиза Debian (bullseye, bookworm и т.д.)
+        # stable - ветка репозитория
+        repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+        # state: present - добавляет репозиторий, если его нет
+        state: present
+
+    # Шестая задача - установка Docker
+    - name: Install Docker
+      # Используем модуль apt для установки пакетов
+      apt:
+        name:
+          # docker-ce - Community Edition Docker (основной пакет)
+          - docker-ce
+          # docker-ce-cli - командная строка (CLI) для Docker
+          - docker-ce-cli
+          # containerd.io - контейнерный runtime, используемый Docker
+          - containerd.io
+        state: present
+
+    # Седьмая задача - запуск Docker как сервиса
+    - name: Start Docker
+      # systemd - модуль для управления systemd сервисами
+      systemd:
+        # name: docker - имя сервиса в systemd
+        name: docker
+        # state: started - запускает сервис, если он остановлен
+        state: started
+        # enabled: yes - добавляет сервис в автозагрузку при старте системы
+        enabled: yes
+
+    # Восьмая задача - добавление пользователя в группу docker
+    - name: Add user to docker group
+      # user - модуль для управления пользователями
+      user:
+        # name - имя пользователя
+        # {{ ansible_user }} - переменная Ansible с именем пользователя, под которым выполняется подключение
+        name: "{{ ansible_user }}"
+        # groups: docker - добавляет пользователя в группу docker
+        groups: docker
+        # append: yes - добавляет группы к существующим, а не заменяет их
+        append: yes

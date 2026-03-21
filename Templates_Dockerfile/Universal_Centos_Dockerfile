@@ -1,0 +1,130 @@
+# Базовый образ CentOS
+FROM centos:latest
+
+# ============================================
+# 1. РАЗДЕЛ СОЗДАНИЯ ДИРЕКТОРИЙ
+# ============================================
+# Укажите здесь директории через пробел, которые нужно создать
+RUN mkdir -p \
+    /app/data \
+    /app/logs \
+    /app/config \
+    /app/temp \
+    /app/uploads \
+    /app/scripts \
+    /app/static \
+    /app/backups
+
+# ============================================
+# 2. РАЗДЕЛ КОПИРОВАНИЯ ФАЙЛОВ
+# ============================================
+# Копирование конфигурационных файлов
+COPY config/*.conf /app/config/
+COPY config/*.json /app/config/
+COPY config/*.yml /app/config/
+COPY config/*.yaml /app/config/
+COPY config/*.ini /app/config/
+
+# Копирование скриптов
+COPY scripts/*.sh /app/scripts/
+COPY scripts/*.py /app/scripts/
+COPY scripts/*.pl /app/scripts/
+COPY scripts/*.rb /app/scripts/
+
+# Копирование статических файлов
+COPY static/css/*.css /app/static/css/
+COPY static/js/*.js /app/static/js/
+COPY static/images/* /app/static/images/
+COPY static/fonts/* /app/static/fonts/
+
+# Копирование отдельных файлов
+COPY README.md /app/
+COPY .env.example /app/.env
+COPY package.json /app/
+COPY requirements.txt /app/
+COPY Gemfile /app/
+COPY setup.py /app/
+
+# ============================================
+# 3. РАЗДЕЛ УСТАНОВКИ УТИЛИТ (CentOS)
+# ============================================
+# Обновляем репозитории и устанавливаем утилиты
+RUN yum update -y && yum install -y \
+    # Базовые системные утилиты
+    bash \
+    curl \
+    wget \
+    vim \
+    nano \
+    htop \
+    git \
+    tree \
+    which \
+    # Архиваторы и работа с файлами
+    unzip \
+    zip \
+    tar \
+    gzip \
+    bzip2 \
+    xz \
+    # Сетевые утилиты
+    net-tools \
+    bind-utils \
+    iputils \
+    telnet \
+    nc \
+    # Системные инструменты
+    procps-ng \
+    util-linux \
+    psutils \
+    # Дополнительные утилиты
+    jq \
+    rsync \
+    openssh-clients \
+    ca-certificates \
+    # Редакторы и просмотрщики
+    less \
+    grep \
+    sed \
+    awk \
+    # Работа с процессами
+    psmisc \
+    lsof \
+    # Дополнительно (раскомментируйте нужное)
+    # epel-release \
+    # python3 \
+    # python3-pip \
+    # nodejs \
+    # npm \
+    # redis \
+    # postgresql \
+    # mysql \
+    && yum clean all \
+    && rm -rf /var/cache/yum/*
+
+# Установка EPEL репозитория (дополнительные пакеты)
+RUN yum install -y epel-release && yum update -y
+
+# ============================================
+# 4. ДОПОЛНИТЕЛЬНЫЕ НАСТРОЙКИ ДЛЯ CENTOS
+# ============================================
+
+# Создаем пользователя (опционально, для безопасности)
+# RUN useradd -m -s /bin/bash -u 1000 -U appuser
+
+# Делаем скрипты исполняемыми (если они были скопированы)
+RUN if [ -d "/app/scripts" ]; then \
+    chmod +x /app/scripts/*.sh 2>/dev/null || true; \
+    chmod +x /app/scripts/*.pl 2>/dev/null || true; \
+    chmod +x /app/scripts/*.rb 2>/dev/null || true; \
+    chmod +x /app/scripts/*.py 2>/dev/null || true; \
+    fi
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Указываем порты (раскомментируйте если нужно)
+# EXPOSE 80 443 3000
+
+# Команда по умолчанию
+CMD ["/bin/bash"]

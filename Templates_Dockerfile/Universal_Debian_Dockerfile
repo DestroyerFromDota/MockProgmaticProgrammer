@@ -1,0 +1,153 @@
+# Базовый образ Debian
+FROM debian:latest
+
+# Отключаем интерактивные запросы при установке пакетов
+ENV DEBIAN_FRONTEND=noninteractive
+
+# ============================================
+# 1. РАЗДЕЛ СОЗДАНИЯ ДИРЕКТОРИЙ
+# ============================================
+# Укажите здесь директории через пробел, которые нужно создать
+RUN mkdir -p \
+    /app/data \
+    /app/logs \
+    /app/config \
+    /app/temp \
+    /app/uploads \
+    /app/scripts \
+    /app/static \
+    /app/backups \
+    /app/cache \
+    /app/ssl
+
+# ============================================
+# 2. РАЗДЕЛ КОПИРОВАНИЯ ФАЙЛОВ
+# ============================================
+# Копирование конфигурационных файлов
+COPY config/*.conf /app/config/
+COPY config/*.json /app/config/
+COPY config/*.yml /app/config/
+COPY config/*.yaml /app/config/
+COPY config/*.ini /app/config/
+COPY config/*.toml /app/config/
+COPY config/*.xml /app/config/
+
+# Копирование скриптов
+COPY scripts/*.sh /app/scripts/
+COPY scripts/*.py /app/scripts/
+COPY scripts/*.pl /app/scripts/
+COPY scripts/*.rb /app/scripts/
+COPY scripts/*.php /app/scripts/
+COPY scripts/*.js /app/scripts/
+
+# Копирование статических файлов
+COPY static/css/*.css /app/static/css/
+COPY static/js/*.js /app/static/js/
+COPY static/images/* /app/static/images/
+COPY static/fonts/* /app/static/fonts/
+COPY static/media/* /app/static/media/
+
+# Копирование SSL сертификатов (если есть)
+COPY ssl/*.crt /app/ssl/
+COPY ssl/*.key /app/ssl/
+COPY ssl/*.pem /app/ssl/
+
+# Копирование отдельных файлов
+COPY README.md /app/
+COPY .env.example /app/.env
+COPY .env /app/.env 2>/dev/null || true
+COPY package.json /app/
+COPY requirements.txt /app/
+COPY Gemfile /app/
+COPY setup.py /app/
+COPY Makefile /app/
+COPY Dockerfile /app/
+COPY docker-compose.yml /app/
+
+# ============================================
+# 3. РАЗДЕЛ УСТАНОВКИ УТИЛИТ (Debian)
+# ============================================
+# Обновляем репозитории и устанавливаем утилиты
+RUN apt-get update && apt-get install -y \
+    # Базовые системные утилиты
+    bash \
+    curl \
+    wget \
+    vim \
+    nano \
+    htop \
+    git \
+    tree \
+    less \
+    which \
+    # Архиваторы и работа с файлами
+    unzip \
+    zip \
+    tar \
+    gzip \
+    bzip2 \
+    xz-utils \
+    p7zip-full \
+    # Сетевые утилиты
+    net-tools \
+    dnsutils \
+    iputils-ping \
+    telnet \
+    netcat \
+    traceroute \
+    mtr \
+    tcpdump \
+    nmap \
+    # Системные инструменты
+    procps \
+    psutils \
+    util-linux \
+    psmisc \
+    lsof \
+    strace \
+    ltrace \
+    # Дополнительные утилиты
+    jq \
+    rsync \
+    openssh-client \
+    ca-certificates \
+    # Редакторы и просмотрщики
+    grep \
+    sed \
+    awk \
+    # Работа с процессами
+    htop \
+    atop \
+    iotop \
+    # Мониторинг
+    sysstat \
+    dstat \
+    # Работа с текстом
+    dos2unix \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# ============================================
+# 4. ДОПОЛНИТЕЛЬНЫЕ НАСТРОЙКИ ДЛЯ DEBIAN
+# ============================================
+
+# Создаем пользователя (опционально, для безопасности)
+# RUN useradd -m -s /bin/bash -u 1000 -U appuser
+
+# Делаем скрипты исполняемыми (если они были скопированы)
+RUN if [ -d "/app/scripts" ]; then \
+    find /app/scripts -name "*.sh" -exec chmod +x {} \; 2>/dev/null || true; \
+    find /app/scripts -name "*.py" -exec chmod +x {} \; 2>/dev/null || true; \
+    find /app/scripts -name "*.pl" -exec chmod +x {} \; 2>/dev/null || true; \
+    find /app/scripts -name "*.rb" -exec chmod +x {} \; 2>/dev/null || true; \
+    find /app/scripts -name "*.php" -exec chmod +x {} \; 2>/dev/null || true; \
+    fi
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Указываем порты (раскомментируйте если нужно)
+# EXPOSE 80 443 3000 5000 8080
+
+# Команда по умолчанию
+CMD ["/bin/bash"]

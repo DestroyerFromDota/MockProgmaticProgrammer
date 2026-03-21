@@ -1,0 +1,109 @@
+# Базовый образ Alpine (легковесный)
+FROM alpine:latest
+
+# ============================================
+# 1. РАЗДЕЛ СОЗДАНИЯ ДИРЕКТОРИЙ
+# ============================================
+# Укажите здесь директории через пробел, которые нужно создать
+RUN mkdir -p \
+    /app/data \
+    /app/logs \
+    /app/config \
+    /app/temp \
+    /app/uploads \
+    /app/scripts \
+    /app/static
+
+# ============================================
+# 2. РАЗДЕЛ КОПИРОВАНИЯ ФАЙЛОВ
+# ============================================
+# Копирование конфигурационных файлов
+COPY config/*.conf /app/config/
+COPY config/*.json /app/config/
+COPY config/*.yml /app/config/
+COPY config/*.yaml /app/config/
+
+# Копирование скриптов
+COPY scripts/*.sh /app/scripts/
+COPY scripts/*.py /app/scripts/
+COPY scripts/*.js /app/scripts/
+
+# Копирование статических файлов
+COPY static/css/*.css /app/static/css/
+COPY static/js/*.js /app/static/js/
+COPY static/images/* /app/static/images/
+
+# Копирование отдельных файлов
+COPY README.md /app/
+COPY .env.example /app/.env
+COPY package.json /app/
+COPY requirements.txt /app/
+
+# ============================================
+# 3. РАЗДЕЛ УСТАНОВКИ УТИЛИТ (Alpine)
+# ============================================
+# Обновляем репозитории и устанавливаем утилиты
+RUN apk update && apk add --no-cache \
+    # Базовые системные утилиты
+    bash \
+    curl \
+    wget \
+    vim \
+    nano \
+    htop \
+    git \
+    tree \
+    # Архиваторы и работа с файлами
+    unzip \
+    zip \
+    tar \
+    gzip \
+    xz \
+    # Сетевые утилиты
+    net-tools \
+    bind-tools \
+    iputils \
+    busybox-extras \
+    # Системные инструменты
+    procps \
+    util-linux \
+    # Дополнительные утилиты
+    jq \
+    rsync \
+    openssh-client \
+    ca-certificates \
+    # Редакторы и просмотрщики
+    less \
+    grep \
+    sed \
+    awk \
+    # Дополнительно (раскомментируйте нужное)
+    # python3 \
+    # py3-pip \
+    # nodejs \
+    # npm \
+    # redis \
+    # postgresql-client \
+    # mysql-client \
+    && rm -rf /var/cache/apk/*
+
+# ============================================
+# 4. ДОПОЛНИТЕЛЬНЫЕ НАСТРОЙКИ ДЛЯ ALPINE
+# ============================================
+
+# Создаем пользователя (опционально, для безопасности)
+# RUN addgroup -g 1000 -S appuser && adduser -u 1000 -S appuser -G appuser
+
+# Делаем скрипты исполняемыми (если они были скопированы)
+RUN if [ -d "/app/scripts" ]; then \
+    chmod +x /app/scripts/*.sh 2>/dev/null || true; \
+    fi
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Указываем порты (раскомментируйте если нужно)
+# EXPOSE 80 443 3000
+
+# Используем bash если он установлен, иначе ash (стандартный для Alpine)
+CMD ["/bin/sh"]
