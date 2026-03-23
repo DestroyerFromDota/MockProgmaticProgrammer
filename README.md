@@ -5,7 +5,12 @@
 	- Docker
 	- Ansible
 	- Python3.6+
-
+	- GitHub
+	- Bash
+	- k8s (В планах, пока не готов)
+	- GitLab CI/CD (В планах, пока не готов)
+	- Postgress (В планах, пока не готов)
+	
 ### Назначение ключевых каталогов
 
 * **`Infra_as_code/ansible/`**  
