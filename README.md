@@ -1,3 +1,5 @@
+![Visitors](https://komarev.com/ghpvc/?username=DestroyerFromDota&repo=MockProgmaticProgrammer&color=brightgreen&style=flat-square)
+
 ## Проект "Лабораторные работы"
 ---
 Добро пожаловать в репозиторий с лабораторными работам. Здесь собраны готовые Docker-контейнеры для проведения практических экзаменов по различным темам.
