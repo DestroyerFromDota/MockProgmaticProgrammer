@@ -1,5 +1,9 @@
 ![Visitors](https://komarev.com/ghpvc/?username=DestroyerFromDota&repo=MockProgmaticProgrammer&color=brightgreen&style=flat-square)
-
+![Docker Pulls](https://img.shields.io/docker/pulls/ваш-образ?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/DestroyerFromDota/MockProgmaticProgrammer?style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/DestroyerFromDota/MockProgmaticProgrammer?style=flat-square)
+![GitHub license](https://img.shields.io/github/license/DestroyerFromDota/MockProgmaticProgrammer?style=flat-square)
+![GitHub stars](https://img.shields.io/github/stars/DestroyerFromDota/MockProgmaticProgrammer?style=social)
 ## Проект "Лабораторные работы"
 ---
 Добро пожаловать в репозиторий с лабораторными работам. Здесь собраны готовые Docker-контейнеры для проведения практических экзаменов по различным темам.
