@@ -95,3 +95,6 @@
 ### Подключиться студентом
 `ssh student@localhost -p 2222`
 пароль: exam2026
+
+
+[![Donate](https://img.shields.io/badge/🍻-Автор_пьёт_колу-FF0000?style=for-the-badge&logo=coca-cola&logoColor=white)]
