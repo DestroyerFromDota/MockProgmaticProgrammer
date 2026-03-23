@@ -1,9 +1,7 @@
-![Visitors](https://komarev.com/ghpvc/?username=DestroyerFromDota&repo=MockProgmaticProgrammer&color=brightgreen&style=flat-square)
-![Docker Pulls](https://img.shields.io/docker/pulls/ваш-образ?style=flat-square)
-![GitHub last commit](https://img.shields.io/github/last-commit/DestroyerFromDota/MockProgmaticProgrammer?style=flat-square)
-![GitHub issues](https://img.shields.io/github/issues/DestroyerFromDota/MockProgmaticProgrammer?style=flat-square)
-![GitHub license](https://img.shields.io/github/license/DestroyerFromDota/MockProgmaticProgrammer?style=flat-square)
-![GitHub stars](https://img.shields.io/github/stars/DestroyerFromDota/MockProgmaticProgrammer?style=social)
+[![Visitors](https://visitor-badge.laobi.icu/badge?page_id=DestroyerFromDota.MockProgmaticProgrammer&color=brightgreen)](https://github.com/DestroyerFromDota/MockProgmaticProgrammer)
+[![GitHub last commit](https://img.shields.io/github/last-commit/DestroyerFromDota/MockProgmaticProgrammer?style=flat-square)](https://github.com/DestroyerFromDota/MockProgmaticProgrammer/commits)
+[![GitHub issues](https://img.shields.io/github/issues/DestroyerFromDota/MockProgmaticProgrammer?style=flat-square)](https://github.com/DestroyerFromDota/MockProgmaticProgrammer/issues)
+[![GitHub stars](https://img.shields.io/github/stars/DestroyerFromDota/MockProgmaticProgrammer?style=social)](https://github.com/DestroyerFromDota/MockProgmaticProgrammer/stargazers)
 ## Проект "Лабораторные работы"
 ---
 Добро пожаловать в репозиторий с лабораторными работам. Здесь собраны готовые Docker-контейнеры для проведения практических экзаменов по различным темам.
