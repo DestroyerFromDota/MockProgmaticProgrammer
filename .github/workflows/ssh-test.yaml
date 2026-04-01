@@ -1,34 +1,70 @@
+# Имя workflow, отображается в интерфейсе GitHub Actions
 name: SSH Test
 
+# Секция триггеров — определяет, когда workflow будет запускаться
 on:
+  # Событие push (отправка коммитов в репозиторий)
   push:
+    # Фильтр по веткам — запускаться только при пуше в ветку main
     branches: [main]
 
+# Секция задач (jobs) — здесь описываются все выполняемые задачи
 jobs:
+  # Идентификатор задачи test (может быть любым)
   test:
+    # Запуск на последней версии Ubuntu (бесплатный раннер GitHub)
     runs-on: ubuntu-latest
     
+    # Шаги (steps) — последовательность команд, выполняемых в задаче
     steps:
+      # Шаг 1: клонирование репозитория
+      # Использует готовое действие (action) checkout@v4
+      # Без этого шага код репозитория не будет доступен в раннере
       - uses: actions/checkout@v4
       
+      # Шаг 2: создание пользовательской Docker-сети
+      # Имя сети: test-net (нужна для связи между контейнерами)
       - name: Create network
         run: docker network create test-net
       
+      # Шаг 3: сборка и запуск SSH-сервера
       - name: Run SSH server
         run: |
+          # Сборка Docker-образа из Dockerfile, находящегося в папке ./exams/exam3
           docker build -t server ./exams/exam3
+          
+          # Запуск контейнера с именем server, подключенного к сети test-net
+          # Флаг -d означает запуск в фоновом режиме (detach mode)
           docker run -d --name server --network test-net server
+          
+          # Ожидание 5 секунд, чтобы SSH-сервер успел полностью запуститься
+          # Без паузы клиент может попытаться подключиться до готовности сервера
           sleep 5
       
+      # Шаг 4: запуск клиента и проверка SSH-подключения
       - name: Run client and connect
         run: |
-          # Используем готовый образ alpine и устанавливаем sshpass на лету
+          # Запуск временного контейнера на основе образа alpine:latest
+          # --rm: автоматическое удаление контейнера после завершения
+          # --network test-net: подключение к той же сети, что и сервер
           docker run --rm --network test-net alpine:latest \
             sh -c "apk add --no-cache openssh-client sshpass && sshpass -p 'exam2026' ssh -o StrictHostKeyChecking=no student@server 'echo Connected'"
+          # Пояснение команд внутри:
+          #   apk add --no-cache openssh-client sshpass — установка SSH-клиента и sshpass (для автоматического ввода пароля)
+          #   sshpass -p 'exam2026' — передача пароля для SSH-подключения
+          #   ssh -o StrictHostKeyChecking=no — отключение проверки хоста (чтобы не было интерактивного запроса)
+          #   student@server — подключение к контейнеру server под пользователем student
+          #   'echo Connected' — команда, которая выполняется на сервере после подключения
       
+      # Шаг 5: очистка (cleanup)
+      # if: always() — гарантирует выполнение этого шага даже если предыдущие шаги завершились с ошибкой
+      # Это важно, чтобы контейнеры не оставались висеть на раннере
       - name: Cleanup
         if: always()
         run: |
+          # Остановка контейнера server (|| true игнорирует ошибку, если контейнер не запущен)
           docker stop server || true
+          # Удаление контейнера server
           docker rm server || true
+          # Удаление сети test-net
           docker network rm test-net || true
