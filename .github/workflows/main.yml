@@ -5,9 +5,6 @@ name: Exam Integrity Test - Broken Cowsay Script
 on:
   push:
     branches: [main]
-    paths:
-      - 'exams/exam3/**'  # Запускается только при изменении экзамена
-  workflow_dispatch:      # Можно запустить вручную
 
 jobs:
   # Проверка, что экзаменационное задание содержит ровно 5 ошибок
