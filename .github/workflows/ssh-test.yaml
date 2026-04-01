@@ -1,34 +1,34 @@
-name: SSH Test  # Название workflow, которое будет отображаться в интерфейсе GitHub Actions
+name: SSH Test
 
-on:  # События, при которых запускается workflow
-  push:  # При пуше (отправке кода) в репозиторий
-    branches: [main]  # Только когда пуш происходит в ветку main
+on:
+  push:
+    branches: [main]
 
-jobs:  # Задачи, которые будут выполняться
-  test:  # Название задачи
-    runs-on: ubuntu-latest  # Виртуальная машина, на которой всё выполняется (Ubuntu последней версии)
+jobs:
+  test:
+    runs-on: ubuntu-latest
     
-    steps:  # Последовательность шагов внутри задачи
-      - uses: actions/checkout@v4  # Клонирует ваш репозиторий на виртуальную машину GitHub
+    steps:
+      - uses: actions/checkout@v4
       
-      - name: Create network  # Название шага (просто для читаемости)
-        run: docker network create test-net  # Создаёт изолированную Docker-сеть, чтобы контейнеры могли общаться друг с другом по имени
+      - name: Create network
+        run: docker network create test-net
       
-      - name: Run SSH server  # Название шага
-        run: |  # Многострочная команда
-          docker build -t server ./exams/exam3  # Собирает Docker-образ из Dockerfile, который лежит в папке exams/exam3, и называет его "server"
-          docker run -d --name server --network test-net server  # Запускает контейнер из образа server: -d (в фоне), --name (называет его server), --network (подключает к созданной сети)
-          sleep 5  # Ждёт 5 секунд, чтобы SSH-сервер внутри контейнера успел запуститься
+      - name: Run SSH server
+        run: |
+          docker build -t server ./exams/exam3
+          docker run -d --name server --network test-net server
+          sleep 5
       
-      - name: Run client and connect  # Название шага
-        run: |  # Многострочная команда
-          docker build -t client ./client  # Собирает Docker-образ для клиента из папки ./client (где лежит его Dockerfile)
-          docker run --rm --network test-net client \  # Запускает контейнер из образа client: --rm (удалить после выполнения), --network (подключает к той же сети)
-            sh -c "sshpass -p 'exam2026' ssh -o StrictHostKeyChecking=no student@server 'echo Connected'"  # Внутри контейнера выполняет: sshpass (вводит пароль), ssh (подключается к контейнеру server под пользователем student), выполняет команду 'echo Connected'
+      - name: Run client and connect
+        run: |
+          # Используем готовый образ alpine и устанавливаем sshpass на лету
+          docker run --rm --network test-net alpine:latest \
+            sh -c "apk add --no-cache openssh-client sshpass && sshpass -p 'exam2026' ssh -o StrictHostKeyChecking=no student@server 'echo Connected'"
       
-      - name: Cleanup  # Название шага
-        if: always()  # Выполняется всегда, даже если предыдущие шаги завершились ошибкой
-        run: |  # Многострочная команда
-          docker stop server || true  # Останавливает контейнер server (|| true игнорирует ошибку, если контейнер уже остановлен)
-          docker rm server || true  # Удаляет контейнер server
-          docker network rm test-net || true  # Удаляет Docker-сеть test-net
+      - name: Cleanup
+        if: always()
+        run: |
+          docker stop server || true
+          docker rm server || true
+          docker network rm test-net || true
