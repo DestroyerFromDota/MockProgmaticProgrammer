@@ -17,4 +17,4 @@ jobs:
         run: docker build -t test-container ./Tests/
       
       - name: Run container
-        run: docker run test-container
+        run: docker run --rm test-container
