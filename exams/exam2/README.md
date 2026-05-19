@@ -14,14 +14,14 @@
 
 ## Подсказки
 - Логи приложения: `tail -f /var/log/myapp/app.log`
-- Конфиг: `/home/student/myapp/config.yaml`
-- Скрипт: `/home/student/myapp/app.py`
+- Конфиг: `~/myapp/config.yaml`
+- Скрипт: `~/myapp/app.py`
 
-- Перезапуск скрипта: 
+- Перезапуск скрипта:
 # Остановить приложение
 sudo pkill -f app.py
 # Запустить с правильным виртуальным окружением
-sudo /opt/venv/bin/python3 /home/student/myapp/app.py &
+sudo /opt/venv/bin/python3 ~/myapp/app.py &
 # Проверить, что запустилось
 ps aux | grep app.py
 # Посмотреть логи
