@@ -67,11 +67,10 @@ RUN echo '# Экзамен: Работа с файлами и редактора
     echo 'Ваша задача - найти и исправить ошибку.' >> /opt/README.md && \
     echo '' >> /opt/README.md && \
     echo '## Что нужно сделать' >> /opt/README.md && \
-    echo '1. Подключись к серверу: `ssh student@localhost -p 2222` (пароль: exam2026)' >> /opt/README.md && \
-    echo '2. Осмотрись в системе' >> /opt/README.md && \
-    echo '3. Найди причину, почему Nginx не работает' >> /opt/README.md && \
-    echo '4. Исправь ошибку с помощью редактора (`nano` или `vim`)' >> /opt/README.md && \
-    echo '5. Запусти Nginx и проверь результат' >> /opt/README.md && \
+    echo '1. Осмотрись в системе' >> /opt/README.md && \
+    echo '2. Найди причину, почему Nginx не работает' >> /opt/README.md && \
+    echo '3. Исправь ошибку с помощью редактора (`nano` или `vim`)' >> /opt/README.md && \
+    echo '4. Запусти Nginx и проверь результат' >> /opt/README.md && \
     echo '' >> /opt/README.md && \
     echo '## Подсказки' >> /opt/README.md && \
     echo '- Проверь статус: `ps aux | grep nginx`' >> /opt/README.md && \

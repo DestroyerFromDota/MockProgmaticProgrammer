@@ -3,6 +3,7 @@ import yaml
 import logging
 import time
 import os
+import pwd
 import sys
 from datetime import datetime
 
@@ -16,8 +17,9 @@ logging.basicConfig(
 
 def load_config():
     """Загружает конфигурацию из YAML файла"""
-    config_path = '/home/student/myapp/config.yaml'
-    
+    home = pwd.getpwuid(os.getuid()).pw_dir
+    config_path = os.path.join(home, 'myapp', 'config.yaml')
+
     try:
         with open(config_path, 'r') as f:
             config = yaml.safe_load(f)
@@ -54,7 +56,8 @@ def main():
             logging.info("Все работает отлично!")
         else:
             logging.error(f"Попытка {attempt}: Не удалось загрузить конфиг")
-            logging.error("Проверьте файл /home/student/myapp/config.yaml")
+            home = pwd.getpwuid(os.getuid()).pw_dir
+            logging.error(f"Проверьте файл {os.path.join(home, 'myapp', 'config.yaml')}")
             attempt += 1
         
         # Ждем 10 секунд перед следующей попыткой

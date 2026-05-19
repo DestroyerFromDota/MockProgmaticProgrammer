@@ -20,11 +20,13 @@ COPY config.py /app/logs/
 RUN chmod -R 777 /app
 
 
-# Установка ssh демона
-RUN apk add --no-cache bash openssh-server \
-    && ssh-keygen -A \
-    && adduser -D student \
-    && echo "student:exam2026" | chpasswd
+# Установка ssh демона и sudo
+RUN apk add --no-cache bash openssh-server sudo \
+    && ssh-keygen -A
+
+# Переменные для пользователя (можно переопределить при запуске)
+ENV USERNAME=student
+ENV PASSWORD=exam2026
 
 # Установка утилит (исправлено: awk заменен на gawk)
 RUN apk update && apk add --no-cache \
@@ -51,5 +53,18 @@ RUN apk update && apk add --no-cache \
     py3-pip \
     && rm -rf /var/cache/apk/*
 
-# Запуск ssh демона
-CMD ["/usr/sbin/sshd", "-D"]
+# Скрипт запуска: создаём пользователя из ENV и стартуем sshd
+RUN echo '#!/bin/sh' > /start.sh && \
+    echo 'USERNAME=${USERNAME:-student}' >> /start.sh && \
+    echo 'PASSWORD=${PASSWORD:-exam2026}' >> /start.sh && \
+    echo '' >> /start.sh && \
+    echo 'adduser -D "$USERNAME"' >> /start.sh && \
+    echo 'echo "$USERNAME:$PASSWORD" | chpasswd' >> /start.sh && \
+    echo 'echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers' >> /start.sh && \
+    echo '' >> /start.sh && \
+    echo '/usr/sbin/sshd' >> /start.sh && \
+    echo 'tail -f /dev/null' >> /start.sh && \
+    chmod +x /start.sh
+
+# Запуск
+CMD ["/start.sh"]
